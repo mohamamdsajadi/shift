@@ -15,6 +15,7 @@ urlpatterns = [
     path('next_month_shift/', next_month_shift_view, name="nms"),
     path('current_month_shift/', current_month_shift_view, name="cms"),
     path('shift/', shift_portal, name="shift"),
+    path('discount/', discount, name="discount"),
     path('reqedit/', request_edit, name="request_edit"),
     path('', ProfileView.as_view(), name="profile"),
 ]

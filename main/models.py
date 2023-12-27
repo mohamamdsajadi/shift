@@ -1,3 +1,4 @@
+import jdatetime
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 from django_jalali.db import models as jmodels
@@ -94,3 +95,11 @@ class ControlShift(models.Model):
     month = models.IntegerField()
     user_change_time = models.IntegerField(default=0)
     limit = models.IntegerField(default=3)
+
+
+class Discount(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    discount = models.FloatField()
+    month = models.IntegerField()
+    year = models.IntegerField()
+    submit_date = models.CharField(default=jdatetime.datetime.now().strftime("%Y-%m-%d")  , max_length=10)

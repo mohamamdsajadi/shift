@@ -226,3 +226,7 @@ a.f-ir i {
 .month-button{
     margin: 0 2%;
 }
+.form-control {
+display: inline;
+    width: 15%;
+}

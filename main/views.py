@@ -11,7 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import CreateView, TemplateView, UpdateView
 
 from main.forms import SignUpForm
-from main.models import BankInfo, Code, File, User, Shift, ControlShift, RequestEdit
+from main.models import BankInfo, Code, File, User, Shift, ControlShift, RequestEdit, Discount
 
 
 class LogInView(LoginView):
@@ -153,6 +153,7 @@ def send_code(request):
 @csrf_exempt
 def next_month_shift_view(request):
     today = jdatetime.date.today().day
+    today = 28
 
     month = jdatetime.date.today().month
     if month < 12:
@@ -166,7 +167,10 @@ def next_month_shift_view(request):
 
         query = shifts.filter(date__exact=jdatetime.date(jdatetime.date.today().year, next_month, 1))
         if query:
-            editable = False
+            if query.count() == query.filter(sobh=False, asr=False, shab=False).count():
+                editable = True
+            else:
+                editable = False
             print(request.user)
             list_of_shifts = shifts.filter(
                 string_date__startswith=str(str(jdatetime.date.today().year) + "-" + str(next_month)))
@@ -182,8 +186,12 @@ def next_month_shift_view(request):
                 date += jdatetime.timedelta(days=1)
         print(list_of_shifts)
 
+        discount_records = Discount.objects.filter(user_id=request.user, month=month, year=jdatetime.date.today().year)
+
         return render(request, 'main/next_month_shift.html',
-                      {'current_month': month, 'list_of_shifts': list_of_shifts, 'control': today >= 27 , 'editable' : editable})
+                      {'current_month': month, 'list_of_shifts': list_of_shifts, 'control': today >= 27,
+                       'editable': editable, 'current_year': jdatetime.datetime.now().year,
+                       'discount_editable': not discount_records.exists(), 'discount_record': discount_records.first()})
     else:
         shift_dict = request.POST
         keys_iterator = iter(shift_dict.keys())
@@ -278,3 +286,10 @@ def current_month_shift_view(request):
 
 def shift_portal(request):
     return render(request, 'main/shift_portal.html')
+
+
+def discount(request):
+    discount_record = Discount.objects.create(user=request.user, discount=float(request.POST["discount"]),
+                                              month=int(request.POST["month"]), year=int(request.POST["year"]))
+    discount_record.save()
+    return redirect('main:nms')

@@ -4,8 +4,6 @@
 
 {% block Content %}
     <div class="card-body">
-
-
         {% if  control %}
             {% if editable %}
                 <div class="table-responsive text-nowrap">
@@ -49,7 +47,8 @@
                             </tbody>
 
                         </table>
-                        <button  onclick="showNotification()" type="submit" style="float: left" class="btn rounded-pill btn-info" id="submitBtn">ارسال
+                        <button onclick="showNotification()" type="submit" style="float: left"
+                                class="btn rounded-pill btn-info" id="submitBtn">ارسال
                             برای مدیر
                         </button>
                     </form>
@@ -57,11 +56,11 @@
                 </div>
                 </div>
             {% else %}
-<div id="notification" class="alert alert-success alert-dismissible  alert2" role="alert">
-            اطلاعات شما با موفقیت ثبت شده است
-            <button   type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-            </button>
-        </div>
+                <div id="notification" class="alert alert-success alert-dismissible  alert2" role="alert">
+                    اطلاعات شما با موفقیت ثبت شده است
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                    </button>
+                </div>
                 <div class="table-responsive text-nowrap">
 
                     <table id="table-shift" class="table table-bordered">
@@ -134,8 +133,34 @@
                             </table>
                         </form>
                     {% endif %}
+
                 </div>
             {% endif %}
+            {% if discount_editable %}
+                        <form method="post" action="{% url 'main:discount' %}">
+                            {% csrf_token %}
+                            <div class="mb-3 row">
+                                <label for="html5-number-input" class="col-md-2 col-form-label">درصد تخفیف مد نظر
+                                    شما</label>
+                                <div class="col-md-10">
+                                    <input class="form-control" type="number" name="discount" value="0"
+                                           id="html5-number-input">
+                                    <input type="hidden" name="month" value="{{ current_month }}" id="date-discount">
+                                    <input type="hidden" name="year" value="{{ current_year }}" id="date-discount">
+                                    <input class="btn-primary" type="submit" value="ثبت">
+                                </div>
+                            </div>
+
+                        </form>
+                    {% else %}
+                        <div class="mb-3 row">
+                            <div class="col-md-10">
+                                <p> درصد تخفیف ثبت شده توسط شما :<span>{{ discount_record.discount }}</span> درصد </p>
+
+                            </div>
+                        </div>
+
+                    {% endif %}
         {% else %}
             <div class="alert alert-secondary" role="alert">
                 از 27 امین روز ماه میتوانید نسبت به تعریف شیفت ماه آینده اقدام کنید
